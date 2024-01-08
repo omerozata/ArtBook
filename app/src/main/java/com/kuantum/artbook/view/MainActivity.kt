@@ -1,7 +1,8 @@
-package com.kuantum.artbook
+package com.kuantum.artbook.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.kuantum.artbook.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

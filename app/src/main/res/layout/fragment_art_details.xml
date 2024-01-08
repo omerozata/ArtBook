@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/light_blue"
+    android:gravity="center"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="300dp"
+        android:id="@+id/imageview"
+        android:scaleType="fitXY"
+        android:layout_margin="16dp"
+        android:src="@drawable/ic_launcher_background"
+        android:layout_height="250dp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:background="@color/white"
+        android:hint="Enter Art Name"
+        android:padding="16dp"
+        android:id="@+id/edit_artname"
+        android:textSize="23sp"
+        android:textColor="@color/black"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:background="@color/white"
+        android:padding="16dp"
+        android:hint="Enter Artist Name"
+        android:id="@+id/edit_artistname"
+        android:textSize="23sp"
+        android:textColor="@color/black"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:hint="Enter Year"
+        android:background="@color/white"
+        android:padding="16dp"
+        android:id="@+id/edit_year"
+        android:textSize="23sp"
+        android:textColor="@color/black"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:layout_width="180dp"
+        android:id="@+id/btn_save"
+        android:text="Save"
+        android:textSize="23sp"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/blue"
+        android:layout_height="80dp"/>
+
+</LinearLayout>
