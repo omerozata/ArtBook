@@ -12,7 +12,8 @@ import com.bumptech.glide.RequestManager
 import com.kuantum.artbook.R
 import com.kuantum.artbook.databinding.FragmentArtDetailsBinding
 import com.kuantum.artbook.util.Status
-import com.kuantum.artbook.viewmodel.ArtViewModel
+import com.kuantum.artbook.viewmodel.ArtDetailsViewModel
+import com.kuantum.artbook.viewmodel.SharedViewModel
 import javax.inject.Inject
 
 class ArtDetailsFragment @Inject constructor(
@@ -20,12 +21,16 @@ class ArtDetailsFragment @Inject constructor(
 ) : Fragment(R.layout.fragment_art_details) {
 
     private var fragmentBinding: FragmentArtDetailsBinding? = null
-    lateinit var viewModel: ArtViewModel
+    lateinit var viewModel: ArtDetailsViewModel
+    lateinit var sharedViewModel: SharedViewModel
+
+    private var selectedUrl = ""
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(requireActivity())[ArtViewModel::class.java]
+        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[ArtDetailsViewModel::class.java]
 
         val binding = FragmentArtDetailsBinding.bind(view)
         fragmentBinding = binding
@@ -40,7 +45,8 @@ class ArtDetailsFragment @Inject constructor(
             viewModel.makeArt(
                 binding.editArtname.text.toString(),
                 binding.editArtistname.text.toString(),
-                binding.editYear.text.toString()
+                binding.editYear.text.toString(),
+                selectedUrl
             )
         }
 
@@ -54,9 +60,10 @@ class ArtDetailsFragment @Inject constructor(
     }
 
     private fun subscribeToObservers() {
-        viewModel.selectedImageUrl.observe(viewLifecycleOwner, Observer {url ->
+        sharedViewModel.selectedImageUrl.observe(viewLifecycleOwner, Observer {url ->
             fragmentBinding?.let {
                 glide.load(url).into(it.imageview)
+                selectedUrl = url
             }
         })
 

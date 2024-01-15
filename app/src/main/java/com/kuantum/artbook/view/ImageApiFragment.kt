@@ -1,7 +1,5 @@
 package com.kuantum.artbook.view
 
-import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -19,8 +17,8 @@ import com.kuantum.artbook.R
 import com.kuantum.artbook.adapter.ImageApiAdapter
 import com.kuantum.artbook.databinding.FragmentImageApiBinding
 import com.kuantum.artbook.util.Status
-import com.kuantum.artbook.util.Util.DEFAULT_SEARCH_LANGUAGE
-import com.kuantum.artbook.viewmodel.ArtViewModel
+import com.kuantum.artbook.viewmodel.ImageApiViewModel
+import com.kuantum.artbook.viewmodel.SharedViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -31,7 +29,8 @@ class ImageApiFragment @Inject constructor(
 ) : Fragment(R.layout.fragment_image_api) {
 
     private var fragmentBinding: FragmentImageApiBinding? = null
-    lateinit var viewModel: ArtViewModel
+    lateinit var viewModel: ImageApiViewModel
+    lateinit var sharedViewModel : SharedViewModel
 
     private lateinit var selectedLanguage: String
 
@@ -42,7 +41,8 @@ class ImageApiFragment @Inject constructor(
         val languageKeyList = arrayListOf<String>("Türkçe", "English", "Français")
         val languageValueList = arrayListOf<String>("tr", "en", "fr")
 
-        viewModel = ViewModelProvider(requireActivity())[ArtViewModel::class.java]
+        sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[ImageApiViewModel::class.java]
 
         selectedLanguage = viewModel.getSearchLanguage()
 
@@ -97,7 +97,7 @@ class ImageApiFragment @Inject constructor(
         binding.recyclerview.layoutManager = GridLayoutManager(requireContext(), 3)
 
         adapter.onItemClick = {
-            viewModel.setSelectedImage(it)
+            sharedViewModel.setSelectedImage(it)
             findNavController().popBackStack()
         }
 

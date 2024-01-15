@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kuantum.artbook.R
 import com.kuantum.artbook.adapter.ArtAdapter
 import com.kuantum.artbook.databinding.FragmentArtsBinding
-import com.kuantum.artbook.viewmodel.ArtViewModel
+import com.kuantum.artbook.viewmodel.ArtsViewModel
 import javax.inject.Inject
 
 class ArtsFragment @Inject constructor(
@@ -20,7 +20,7 @@ class ArtsFragment @Inject constructor(
 ) : Fragment(R.layout.fragment_arts) {
 
     private var fragmentBinding: FragmentArtsBinding? = null
-    lateinit var viewModel: ArtViewModel
+    lateinit var viewModel: ArtsViewModel
 
 
     private val swipeCallBack = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -44,7 +44,7 @@ class ArtsFragment @Inject constructor(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(requireActivity())[ArtViewModel::class.java]
+        viewModel = ViewModelProvider(requireActivity())[ArtsViewModel::class.java]
 
 
         val binding = FragmentArtsBinding.bind(view)
