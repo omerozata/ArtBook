@@ -24,9 +24,9 @@ class ArtRepositoryImpl @Inject constructor(
         return dao.getArts()
     }
 
-    override suspend fun searchImage(search: String): Resource<ImageResponse> {
+    override suspend fun searchImage(search: String, language: String): Resource<ImageResponse> {
         return try {
-            val response = api.imageSearch(search)
+            val response = api.imageSearch(search, language)
 
             if (response.isSuccessful) {
                 response.body()?.let {

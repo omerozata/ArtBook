@@ -1,5 +1,6 @@
 package com.kuantum.artbook.viewmodel
 
+import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,13 +9,15 @@ import com.kuantum.artbook.model.ImageResponse
 import com.kuantum.artbook.repo.ArtRepository
 import com.kuantum.artbook.roomdb.Art
 import com.kuantum.artbook.util.Resource
+import com.kuantum.artbook.util.Util.DEFAULT_SEARCH_LANGUAGE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ArtViewModel @Inject constructor(
-    private val repository: ArtRepository
+    private val repository: ArtRepository,
+    private val preferences : SharedPreferences
 ) : ViewModel() {
 
     val artList = repository.getArts()
@@ -28,12 +31,29 @@ class ArtViewModel @Inject constructor(
     val selectedImageUrl: LiveData<String>
         get() = selectedImage
 
+    private val selectedLanguage = MutableLiveData<String>()
+    val selectedSearchLanguage: LiveData<String>
+        get() = selectedLanguage
+
+
     private var insertArtMsg = MutableLiveData<Resource<Art>>()
     val insertArtMessage: LiveData<Resource<Art>>
         get() = insertArtMsg
 
+    fun saveSearchLanguage(language: String) {
+        preferences.edit().putString("language", language).apply()
+    }
+
+    fun getSearchLanguage() : String {
+        return preferences.getString("language", DEFAULT_SEARCH_LANGUAGE).toString()
+    }
+
     fun resetInsertArtMsg() {
         insertArtMsg = MutableLiveData<Resource<Art>>()
+    }
+
+    fun setSelectedLanguage(language : String) {
+        selectedLanguage.value = language
     }
 
     fun setSelectedImage(url: String) {
@@ -67,13 +87,13 @@ class ArtViewModel @Inject constructor(
         insertArtMsg.value = Resource.success(art)
     }
 
-    fun searchImage(search: String) {
+    fun searchImage(search: String, language: String) {
         if (search.isEmpty())
             return
 
         images.value = Resource.loading(null)
         viewModelScope.launch {
-            val response = repository.searchImage(search)
+            val response = repository.searchImage(search, language)
             images.value = response
         }
     }

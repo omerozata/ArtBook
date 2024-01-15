@@ -1,7 +1,11 @@
 package com.kuantum.artbook.view
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
@@ -15,6 +19,7 @@ import com.kuantum.artbook.R
 import com.kuantum.artbook.adapter.ImageApiAdapter
 import com.kuantum.artbook.databinding.FragmentImageApiBinding
 import com.kuantum.artbook.util.Status
+import com.kuantum.artbook.util.Util.DEFAULT_SEARCH_LANGUAGE
 import com.kuantum.artbook.viewmodel.ArtViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,15 +33,50 @@ class ImageApiFragment @Inject constructor(
     private var fragmentBinding: FragmentImageApiBinding? = null
     lateinit var viewModel: ArtViewModel
 
+    private lateinit var selectedLanguage: String
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val languageKeyList = arrayListOf<String>("Türkçe", "English", "Français")
+        val languageValueList = arrayListOf<String>("tr", "en", "fr")
+
         viewModel = ViewModelProvider(requireActivity())[ArtViewModel::class.java]
+
+        selectedLanguage = viewModel.getSearchLanguage()
+
+        println(selectedLanguage)
 
         val binding = FragmentImageApiBinding.bind(view)
         fragmentBinding = binding
 
-        var job : Job? = null
+        val spinnerAdapter = ArrayAdapter<String>(
+            requireContext(), android.R.layout.simple_spinner_dropdown_item, languageKeyList
+        )
+
+        val position = languageValueList.indexOf(selectedLanguage)
+        println("position$position")
+
+        binding.spinner.apply {
+            adapter = spinnerAdapter
+            setSelection(position, false)
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?, view: View?, position: Int, id: Long
+                ) {
+                    viewModel.setSelectedLanguage(languageValueList[position])
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+
+                }
+
+            }
+        }
+
+
+        var job: Job? = null
         binding.editSearch.addTextChangedListener {
             job?.cancel()
 
@@ -44,7 +84,8 @@ class ImageApiFragment @Inject constructor(
                 delay(1000)
                 it?.let {
                     if (it.toString().isNotEmpty()) {
-                        viewModel.searchImage(it.toString())
+                        println(selectedLanguage)
+                        viewModel.searchImage(it.toString(), selectedLanguage)
                     }
                 }
             }
@@ -71,6 +112,7 @@ class ImageApiFragment @Inject constructor(
     }
 
     private fun subscribeToObservers() {
+
         viewModel.imageList.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Status.SUCCESS -> {
@@ -86,10 +128,17 @@ class ImageApiFragment @Inject constructor(
                 }
 
                 Status.ERROR -> {
-                    Toast.makeText(requireContext(), it.message ?: "Error", Toast.LENGTH_LONG).show()
+                    Toast.makeText(requireContext(), it.message ?: "Error", Toast.LENGTH_LONG)
+                        .show()
                     fragmentBinding?.progressbar?.visibility = View.GONE
                 }
             }
+
+        })
+
+        viewModel.selectedSearchLanguage.observe(viewLifecycleOwner, Observer {
+            selectedLanguage = it
+            viewModel.saveSearchLanguage(it)
         })
     }
 

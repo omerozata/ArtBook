@@ -1,6 +1,7 @@
 package com.kuantum.artbook.di
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -56,4 +57,15 @@ object AppModule {
             RequestOptions().placeholder(R.drawable.ic_launcher_foreground)
                 .error(R.drawable.ic_launcher_foreground)
         )
+
+    @Singleton
+    @Provides
+    fun injectSharedPreferences(
+        @ApplicationContext context: Context
+    ): SharedPreferences {
+        return context.getSharedPreferences(
+            "com.kuantum.artbook",
+            Context.MODE_PRIVATE
+        )
+    }
 }

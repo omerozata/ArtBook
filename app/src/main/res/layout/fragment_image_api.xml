@@ -4,26 +4,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:orientation="horizontal"
         android:layout_height="wrap_content">
 
         <ProgressBar
-            android:layout_width="wrap_content"
+            android:layout_width="60dp"
             android:id="@+id/progressbar"
+            android:layout_alignParentStart="true"
             android:visibility="gone"
-            android:layout_height="wrap_content"/>
+            android:layout_height="60dp"/>
 
         <EditText
             android:layout_width="match_parent"
             android:id="@+id/edit_search"
             android:hint="Search Art"
+            android:layout_alignParentStart="true"
             android:padding="14dp"
+            android:layout_toStartOf="@id/spinner"
             android:textColor="@color/black"
             android:textSize="23sp"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
+            android:layout_marginEnd="5dp"
+            android:layout_height="60dp"/>
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:layout_width="100dp"
+            android:id="@+id/spinner"
+            android:spinnerMode="dialog"
+            android:layout_alignParentEnd="true"
+            android:layout_height="60dp"/>
+    </RelativeLayout>
 
 
 

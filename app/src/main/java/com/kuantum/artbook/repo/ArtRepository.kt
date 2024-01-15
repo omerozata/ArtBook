@@ -13,6 +13,6 @@ interface ArtRepository {
 
     fun getArts(): LiveData<List<Art>>
 
-    suspend fun searchImage(search: String): Resource<ImageResponse>
+    suspend fun searchImage(search: String, language: String): Resource<ImageResponse>
 
 }
