@@ -6,7 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kuantum.artbook.model.ImageResponse
+import com.kuantum.artbook.model.Language
 import com.kuantum.artbook.repo.ArtRepository
+import com.kuantum.artbook.util.LanguageList
 import com.kuantum.artbook.util.Resource
 import com.kuantum.artbook.util.Util
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,23 +25,21 @@ class ImageApiViewModel @Inject constructor(
     val imageList: LiveData<Resource<ImageResponse>>
         get() = images
 
-
-    private val selectedLanguage = MutableLiveData<String>()
-    val selectedSearchLanguage: LiveData<String>
+    private val selectedLanguage = MutableLiveData<Int>()
+    val selectedSearchLanguage: LiveData<Int>
         get() = selectedLanguage
 
-    fun saveSearchLanguage(language: String) {
-        preferences.edit().putString("language", language).apply()
+    fun saveSearchLanguage(languagePosition: Int) {
+        preferences.edit().putInt("language", languagePosition).apply()
     }
 
-    fun getSearchLanguage() : String {
-        return preferences.getString("language", Util.DEFAULT_SEARCH_LANGUAGE).toString()
+    fun getSearchLanguagePosition() : Int {
+        return preferences.getInt("language", LanguageList().defaultLanguagePosition())
     }
 
-    fun setSelectedLanguage(language : String) {
+    fun setSelectedLanguage(language : Int) {
         selectedLanguage.value = language
     }
-
 
     fun searchImage(search: String, language: String) {
         if (search.isEmpty())

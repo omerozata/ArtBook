@@ -5,12 +5,13 @@ import androidx.fragment.app.FragmentFactory
 import com.bumptech.glide.RequestManager
 import com.kuantum.artbook.adapter.ArtAdapter
 import com.kuantum.artbook.adapter.ImageApiAdapter
+import com.kuantum.artbook.adapter.LanguageSpinnerAdapter
 import javax.inject.Inject
 
 class ArtFragmentFactory @Inject constructor(
     private val glide: RequestManager,
     private val artAdapter: ArtAdapter,
-    private val imageApiAdapter : ImageApiAdapter
+    private val imageApiAdapter : ImageApiAdapter,
 ) : FragmentFactory() {
 
     override fun instantiate(classLoader: ClassLoader, className: String): Fragment {

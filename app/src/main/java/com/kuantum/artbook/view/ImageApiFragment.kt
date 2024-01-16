@@ -3,7 +3,6 @@ package com.kuantum.artbook.view
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.widget.addTextChangedListener
@@ -15,7 +14,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.kuantum.artbook.R
 import com.kuantum.artbook.adapter.ImageApiAdapter
+import com.kuantum.artbook.adapter.LanguageSpinnerAdapter
 import com.kuantum.artbook.databinding.FragmentImageApiBinding
+import com.kuantum.artbook.model.Language
+import com.kuantum.artbook.util.LanguageList
 import com.kuantum.artbook.util.Status
 import com.kuantum.artbook.viewmodel.ImageApiViewModel
 import com.kuantum.artbook.viewmodel.SharedViewModel
@@ -25,56 +27,46 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ImageApiFragment @Inject constructor(
-    private val adapter: ImageApiAdapter
+    private val adapter: ImageApiAdapter,
 ) : Fragment(R.layout.fragment_image_api) {
 
     private var fragmentBinding: FragmentImageApiBinding? = null
-    lateinit var viewModel: ImageApiViewModel
-    lateinit var sharedViewModel : SharedViewModel
+    private lateinit var viewModel: ImageApiViewModel
+    private lateinit var sharedViewModel: SharedViewModel
 
-    private lateinit var selectedLanguage: String
+    private var selectedLanguage = LanguageList().defaultLanguagePosition()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val languageKeyList = arrayListOf<String>("Türkçe", "English", "Français")
-        val languageValueList = arrayListOf<String>("tr", "en", "fr")
-
         sharedViewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         viewModel = ViewModelProvider(requireActivity())[ImageApiViewModel::class.java]
 
-        selectedLanguage = viewModel.getSearchLanguage()
+        selectedLanguage = viewModel.getSearchLanguagePosition()
 
-        println(selectedLanguage)
+        println(LanguageList().languageList()[selectedLanguage].language)
 
         val binding = FragmentImageApiBinding.bind(view)
         fragmentBinding = binding
 
-        val spinnerAdapter = ArrayAdapter<String>(
-            requireContext(), android.R.layout.simple_spinner_dropdown_item, languageKeyList
-        )
-
-        val position = languageValueList.indexOf(selectedLanguage)
-        println("position$position")
+        val spinnerAdapter = LanguageSpinnerAdapter(requireContext(), LanguageList().languageList())
 
         binding.spinner.apply {
             adapter = spinnerAdapter
-            setSelection(position, false)
+            setSelection(selectedLanguage, false)
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(
                     parent: AdapterView<*>?, view: View?, position: Int, id: Long
                 ) {
-                    viewModel.setSelectedLanguage(languageValueList[position])
+                    viewModel.setSelectedLanguage(position)
+                    println(LanguageList().languageList()[selectedLanguage].language)
                 }
 
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-
-                }
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
 
             }
         }
-
 
         var job: Job? = null
         binding.editSearch.addTextChangedListener {
@@ -84,13 +76,13 @@ class ImageApiFragment @Inject constructor(
                 delay(1000)
                 it?.let {
                     if (it.toString().isNotEmpty()) {
-                        println(selectedLanguage)
-                        viewModel.searchImage(it.toString(), selectedLanguage)
+                        println(LanguageList().languageList()[selectedLanguage].language)
+                        val lang = LanguageList().languageList()[selectedLanguage].lang
+                        viewModel.searchImage(it.toString(), lang)
                     }
                 }
             }
         }
-
         subscribeToObservers()
 
         binding.recyclerview.adapter = adapter
@@ -100,7 +92,6 @@ class ImageApiFragment @Inject constructor(
             sharedViewModel.setSelectedImage(it)
             findNavController().popBackStack()
         }
-
 
         val callBack = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
